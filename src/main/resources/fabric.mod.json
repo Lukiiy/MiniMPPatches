@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "mppatches",
+  "version": "${version}",
+  "name": "Mini Multiplayer Patches",
+  "description": "A silly attempt at patching CLIENT-SIDE network related stuff on b1.7.3",
+  "authors": [ "Lukiiy" ],
+  "contact": {
+    "sources": "https://github.com/Lukiiy/MiniMPPatches",
+    "issues": "https://github.com/Lukiiy/MiniMPPatches/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/mppatches/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "me.lukiiy.mppatches.MPPatches"
+    ],
+    "f3mod": [
+      "me.lukiiy.mppatches.F3ModHook"
+    ]
+  },
+  "mixins": [
+    "mppatches.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13.3",
+    "minecraft": "1.0.0-beta.7.3"
+  },
+  "suggests": {
+    "f3mod": ">=1.2.0"
+  }
+}
