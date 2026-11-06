@@ -1,5 +1,7 @@
 plugins {
-    id("babric-loom") version "1.5-SNAPSHOT"
+    java
+    id("fabric-loom") version "1.19.3"
+    id("ploceus") version "1.19.1"
 }
 
 java {
@@ -8,31 +10,29 @@ java {
     withSourcesJar()
 }
 
-base {
-    archivesName.set(project.property("archives_base_name").toString())
-}
+base.archivesName.set(project.property("archives_base_name").toString())
+
+loom {}
+
+ploceus.setIntermediaryGeneration(2)
 
 version = project.property("mod_version").toString()
 group = project.property("maven_group").toString()
 
-loom {
-    gluedMinecraftJar()
-    customMinecraftManifest.set("https://babric.github.io/manifest-polyfill/${property("minecraft_version")}.json")
-    intermediaryUrl.set("https://maven.glass-launcher.net/babric/babric/intermediary/%1\$s/intermediary-%1\$s-v2.jar")
-}
-
-repositories {
-    maven("https://maven.glass-launcher.net/babric")
-}
-
 dependencies {
     minecraft("com.mojang:minecraft:${property("minecraft_version")}")
-    mappings("babric:barn:${property("yarn_mappings")}:v2")
-    modImplementation("babric:fabric-loader:${property("loader_version")}")
+    modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
     modCompileOnly(files("lib/f3mod-1.2.jar"))
 
-    implementation("org.slf4j:slf4j-api:1.8.0-beta4")
-    implementation("org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0")
+    clientExceptions(ploceus.raven(project.property("client_raven_build").toString(), "client"))
+    serverExceptions(ploceus.raven(project.property("server_raven_build").toString(), "server"))
+    clientSignatures(ploceus.sparrow(project.property("client_sparrow_build").toString(), "client"))
+    serverSignatures(ploceus.sparrow(project.property("server_sparrow_build").toString(), "server"))
+    clientNests(ploceus.nests(project.property("client_nests_build").toString(), "client"))
+    serverNests(ploceus.nests(project.property("server_nests_build").toString(), "server"))
+    mappings(ploceus.featherMappings(project.property("feather_build").toString()))
+
+    ploceus.dependOsl(project.property("osl_version").toString())
 }
 
 tasks {
