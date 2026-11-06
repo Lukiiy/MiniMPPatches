@@ -10,18 +10,18 @@ java {
     withSourcesJar()
 }
 
-base.archivesName.set(project.property("archives_base_name").toString())
+base.archivesName.set(project.property("name").toString())
 
 loom {}
 
 ploceus.setIntermediaryGeneration(2)
 
-version = project.property("mod_version").toString()
-group = project.property("maven_group").toString()
+version = project.property("version").toString()
+group = project.property("group").toString()
 
 dependencies {
-    minecraft("com.mojang:minecraft:${property("minecraft_version")}")
-    modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
+    minecraft("com.mojang:minecraft:${property("minecraftVer")}")
+    modImplementation("net.fabricmc:fabric-loader:${property("loaderVer")}")
     modCompileOnly(files("lib/f3mod-1.2.jar"))
 
     clientExceptions(ploceus.raven(project.property("client_raven_build").toString(), "client"))
