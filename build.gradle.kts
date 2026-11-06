@@ -10,9 +10,7 @@ java {
     withSourcesJar()
 }
 
-base.archivesName.set(project.property("name").toString())
-
-loom {}
+base.archivesName.set(project.property("named").toString())
 
 ploceus.setIntermediaryGeneration(2)
 
@@ -22,7 +20,7 @@ group = project.property("group").toString()
 dependencies {
     minecraft("com.mojang:minecraft:${property("minecraftVer")}")
     modImplementation("net.fabricmc:fabric-loader:${property("loaderVer")}")
-    modCompileOnly(files("lib/f3mod-1.2.jar"))
+    modCompileOnly(files("lib/f3mod-ornithe-1.2.jar"))
 
     clientExceptions(ploceus.raven(project.property("clientRaven").toString(), "client"))
     serverExceptions(ploceus.raven(project.property("serverRaven").toString(), "server"))
