@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
-    @Shadow private int ticksPlayed;
+    @Shadow private int ticks;
 
     @Inject(method = "init", at = @At("TAIL"))
     private void mpPatch$get(CallbackInfo ci) {
@@ -20,7 +20,7 @@ public class MinecraftMixin {
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void mpPatch$updateDebug(CallbackInfo ci) {
-        if ((ticksPlayed % 20) == 0) ClientNetStats.updateDebugCache();
+        if ((ticks % 20) == 0) ClientNetStats.updateDebugCache();
 
         ClientNetStats.packetsSent.lazySet(0);
         ClientNetStats.packetsReceived.lazySet(0);

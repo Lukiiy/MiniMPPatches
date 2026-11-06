@@ -2,8 +2,8 @@ package me.lukiiy.mppatches.mixin;
 
 import me.lukiiy.mppatches.MPPatches;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.player.PlayerEntity;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,6 +29,6 @@ public class EntityMixin {
 
     @Unique
     private static boolean mpPatch$allowWrite(Entity entity) {
-        return !MPPatches.minecraft.isWorldRemote() || entity instanceof PlayerEntity || !(entity instanceof LivingEntity);
+        return !MPPatches.minecraft.isMultiplayer() || entity instanceof PlayerEntity || !(entity instanceof MobEntity);
     }
 }
