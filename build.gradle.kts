@@ -24,15 +24,15 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${property("loaderVer")}")
     modCompileOnly(files("lib/f3mod-1.2.jar"))
 
-    clientExceptions(ploceus.raven(project.property("client_raven_build").toString(), "client"))
-    serverExceptions(ploceus.raven(project.property("server_raven_build").toString(), "server"))
-    clientSignatures(ploceus.sparrow(project.property("client_sparrow_build").toString(), "client"))
-    serverSignatures(ploceus.sparrow(project.property("server_sparrow_build").toString(), "server"))
-    clientNests(ploceus.nests(project.property("client_nests_build").toString(), "client"))
-    serverNests(ploceus.nests(project.property("server_nests_build").toString(), "server"))
-    mappings(ploceus.featherMappings(project.property("feather_build").toString()))
+    clientExceptions(ploceus.raven(project.property("clientRaven").toString(), "client"))
+    serverExceptions(ploceus.raven(project.property("serverRaven").toString(), "server"))
+    clientSignatures(ploceus.sparrow(project.property("clientSparrow").toString(), "client"))
+    serverSignatures(ploceus.sparrow(project.property("serverSparrow").toString(), "server"))
+    clientNests(ploceus.nests(project.property("clientNests").toString(), "client"))
+    serverNests(ploceus.nests(project.property("serverNests").toString(), "server"))
+    mappings(ploceus.featherMappings(project.property("feather").toString()))
 
-    ploceus.dependOsl(project.property("osl_version").toString())
+    ploceus.dependOsl(project.property("oslVer").toString())
 }
 
 tasks {
