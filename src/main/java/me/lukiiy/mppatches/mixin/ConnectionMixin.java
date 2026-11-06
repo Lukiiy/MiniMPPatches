@@ -2,8 +2,8 @@ package me.lukiiy.mppatches.mixin;
 
 import me.lukiiy.mppatches.ClientNetStats;
 import net.minecraft.network.Connection;
-import net.minecraft.network.NetworkHandler;
-import net.minecraft.network.Packet;
+import net.minecraft.network.PacketHandler;
+import net.minecraft.network.packet.Packet;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,45 +18,45 @@ import java.util.List;
 
 @Mixin(Connection.class)
 public class ConnectionMixin {
-    @Shadow private List field_1286; // readPackets
-    @Shadow private List field_1287; // dataPackets
-    @Shadow private List field_1288; // chunkPackets
+    @Shadow private List<Packet> readQueue;
+    @Shadow private List<Packet> sendQueue;
+    @Shadow private List<Packet> delayedSendQueue;
 
-    @Shadow private Thread field_1291; // write thread
-    @Shadow private Thread field_1292; // read thread
+    @Shadow private Thread writer;
+    @Shadow private Thread reader;
 
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void mpPatch$init(Socket string, String arg, NetworkHandler par3, CallbackInfo ci) {
+    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/lang/Thread;start()V", ordinal = 0))
+    private void mpPatch$init(Socket socket, String name, PacketHandler listener, CallbackInfo ci) {
         try {
-            string.setTcpNoDelay(true);
+            socket.setTcpNoDelay(true);
         } catch (SocketException ignored) {}
 
-        this.field_1286 = Collections.synchronizedList(new LinkedList<>());
-        this.field_1287 = Collections.synchronizedList(new LinkedList<>());
-        this.field_1288 = Collections.synchronizedList(new LinkedList<>());
+        readQueue = Collections.synchronizedList(new LinkedList<>());
+        sendQueue = Collections.synchronizedList(new LinkedList<>());
+        delayedSendQueue = Collections.synchronizedList(new LinkedList<>());
     }
 
-    @Inject(method = "sendPacket", at = @At("TAIL"))
-    private void mpPatch$wakeWriter(Packet packet, CallbackInfo ci) {
-        if (this.field_1291 != null) this.field_1291.interrupt();
-    }
-
-    @Inject(method = "method_1129", at = @At("TAIL"))
-    private void mpPatch$wakeReader(CallbackInfo ci) {
-        if (this.field_1292 != null) this.field_1292.interrupt();
-    }
-
-    @Inject(method = "sendPacket", at = @At("HEAD"))
+    @Inject(method = "send", at = @At("HEAD"))
     private void mpPatch$countSent(Packet packet, CallbackInfo ci) {
         ClientNetStats.packetsSent.incrementAndGet();
     }
 
-    @Inject(method = "method_1129", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Packet;handle(Lnet/minecraft/network/NetworkHandler;)V"))
+    @Inject(method = "send", at = @At("TAIL"))
+    private void mpPatch$wakeWriter(Packet packet, CallbackInfo ci) {
+        if (writer != null) writer.interrupt();
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void mpPatch$wakeReader(CallbackInfo ci) {
+        if (reader != null) reader.interrupt();
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/Packet;handle(Lnet/minecraft/network/PacketHandler;)V"))
     private void mpPatch$countReceived(CallbackInfo ci) {
         ClientNetStats.packetsReceived.incrementAndGet();
     }
 
-    @Inject(method = "method_1129", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Packet;handle(Lnet/minecraft/network/NetworkHandler;)V"))
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/Packet;handle(Lnet/minecraft/network/PacketHandler;)V"))
     private void mpPatch$markPingReceive(CallbackInfo ci) {
         long now = System.currentTimeMillis();
         long sent = ClientNetStats.lastPingReceived;
