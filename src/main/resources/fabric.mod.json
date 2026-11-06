@@ -24,7 +24,6 @@
     "mppatches.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.13.3",
     "minecraft": "1.0.0-beta.7.3"
   },
   "suggests": {
